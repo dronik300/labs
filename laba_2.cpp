@@ -1,6 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
-#include <locale.h>
 #include <string>
 
 using namespace std;
@@ -14,7 +13,7 @@ int input_check(char s[])
 			n = n*10 + int(s[i] - 48);
 		else
 		{
-			cout << "¬ведено не число, введите число\n";
+			cout << "Vvedeno ne chislo, vvedite chislo\n";
 			cin >> s;
 			return input_check(s);
 		}
@@ -64,7 +63,6 @@ public:
 };
 
 int main() {
-	setlocale(LC_ALL, "Rus");
 	int amount, ID=0, set_price=0;
 	string set_name;
 	char data[20];
@@ -72,10 +70,10 @@ int main() {
 	manager m;
 	amount = 3;
 	for (int i = 0; i < amount; i++) {
-		cout << "¬ведите идентификационный номер : ";
+		cout << "Vvedite identificacionni nomer: ";
 		cin >> data;
 		ID = input_check(data);
-		cout << "¬ведите назвавие фрукта : ";
+		cout << "Vvedite nazvanie fructa: ";
 		cin >> set_name;
 		cout << endl;
 		ptr[i] = { ID, 0, set_name };
@@ -89,7 +87,7 @@ int main() {
 	}
 	cout << endl;
 	for (int i = 0; i < amount; i++) {
-		cout << "¬ведите цену " << i + 1 << " фрукта :";
+		cout << "Vvedite ceny " << i + 1 << "fructa :";
 		cin >> data;
 		set_price = input_check(data);
 		m.set(ptr[i], set_price);
