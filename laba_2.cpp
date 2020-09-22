@@ -36,9 +36,9 @@ public:
 
 	}
 	fruit(int id, int price, string name) {
-		this->number = id;
-		this->fruit_name = name;
-		this->fruit_price = price;
+		number = id;
+		fruit_name = name;
+		fruit_price = price;
 	}
 	~fruit() {
 	}
