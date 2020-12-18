@@ -153,7 +153,7 @@ public:
 		throw 2;
 	}
 
-	void InsertNode(T data) {
+	void ad(T data) {
 		Node<T>* temp = nullptr;
 		if (!root) {
 			root = insert(data, nullptr);
@@ -258,15 +258,15 @@ private:
 int main() {
 	int a;
 	BinaryTree<int> tree;
-	tree.InsertNode(15);
-	tree.InsertNode(16);
-	tree.InsertNode(17);
-	tree.InsertNode(2);
-	tree.InsertNode(8);
-	tree.InsertNode(1);
+	tree.ad(15);
+	tree.ad(16);
+	tree.ad(17);
+	tree.ad(2);
+	tree.ad(8);
+	tree.ad(1);
 	Iterator<int> it = tree.Begin();
 	tree.del(8);
-	cout << "find " << tree.find(3) << endl;
+	cout << "find " << tree.find(2) << endl;
 	while (1) {
 		if (it == tree.End()) {
 			cout << it.GetValue() << "; ";
