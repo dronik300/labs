@@ -43,7 +43,8 @@ template <class T>
 class BinaryTree;
 
 template <class T>
-class Node {
+class Node 
+{
 private:
 	T data;
 	Node* left;
@@ -55,55 +56,69 @@ private:
 };
 
 template <class T>
-class Iterator {
+class Iterator 
+{
 public:
-	Iterator() {
+	Iterator() 
+	{
 		nodePointer = nullptr;
 	}
-	Iterator(Node<T>* nodePointer) {
+	Iterator(Node<T>* nodePointer) 
+	{
 		this->nodePointer = nodePointer;
 	}
-	~Iterator() {
+	~Iterator() 
+	{
 		nodePointer = nullptr;
 	}
-	bool operator== (Iterator other) {
-		if (nodePointer == other.nodePointer) {
+	bool operator== (Iterator other) 
+	{
+		if (nodePointer == other.nodePointer) 
+		{
 			return true;
 		}
-		else {
+		else 
+		{
 			return false;
 		}
 	}
-	bool operator!= (Iterator other) {
+	bool operator!= (Iterator other) 
+	{
 		return !operator==(other);
 	}
 	T GetValue() {
-		if (nodePointer == nullptr) {
+		if (nodePointer == nullptr) 
+		{
 			throw 3;
 		}
 		return nodePointer->data;
 	}
 	void Next() {
-		if (nodePointer->right != nullptr) {
+		if (nodePointer->right != nullptr) 
+		{
 			nodePointer = nodePointer->right;
-			while (nodePointer->left != nullptr) {
+			while (nodePointer->left != nullptr) 
+			{
 				nodePointer = nodePointer->left;
 			}
 		}
 		else {
-			if (nodePointer->parent == nullptr) {
+			if (nodePointer->parent == nullptr) 
+			{
 				return;
 			}
-			if (nodePointer->parent->left && nodePointer->parent->left == nodePointer) {
+			if (nodePointer->parent->left && nodePointer->parent->left == nodePointer) 
+			{
 				nodePointer = nodePointer->parent;
 				return;
 			}
-			if (nodePointer->parent->right && nodePointer->parent->right == nodePointer) {
-				while (nodePointer->data > nodePointer->parent->data) {
+			if (nodePointer->parent->right && nodePointer->parent->right == nodePointer) 
+			{
+				while (nodePointer->data > nodePointer->parent->data) 
+				{
 					nodePointer = nodePointer->parent;
-					if (nodePointer->parent == nullptr) {
+					if (nodePointer->parent == nullptr) 
 						throw 3;
-					}
 				}
 				nodePointer = nodePointer->parent;
 				return;
@@ -118,80 +133,91 @@ private:
 template <class T>
 class BinaryTree {
 public:
-	BinaryTree() {
+	BinaryTree() 
+	{
 		root = nullptr;
 		size = 0;
 	}
 
-	Iterator<T> Begin() {
+	Iterator<T> Begin() 
+	{
 		Node<T>* temp = root;
-		while (temp->left) {
+		while (temp->left)
 			temp = temp->left;
-		}
 		return temp;
 	}
 
-	Iterator<T> End() {
+	Iterator<T> End() 
+	{
 		Node<T>* temp = root;
-		while (temp->right) {
+		while (temp->right) 
 			temp = temp->right;
-		}
 		return temp;
 	}
 
-	Node<T>* find(T value) {
+	Node<T>* find(T value) 
+	{
 		Node<T>* temp = root;
-		while (temp) {
+		while (temp) 
+		{
 			if (temp->data > value) 
 				temp = root->left;
 			else if (temp->data < value) 
 				temp = temp->right;
-			else {
+			else
 				return temp;
-			}
 		}
 		throw 2;
 	}
 
-	void ad(T data) {
+	void ad(T data) 
+	{
 		Node<T>* temp = nullptr;
-		if (!root) {
+		if (!root) 
+		{
 			root = insert(data, nullptr);
 			size++;
 		}
 		else {
 			Node<T>* iterator = root;
-			while (iterator) {
-				if (data > iterator->data) {
-					if (iterator->right) {
+			while (iterator) 
+			{
+				if (data > iterator->data) 
+				{
+					if (iterator->right) 
+					{
 						iterator = iterator->right;
 						continue;
 					}
-					else {
+					else 
+					{
 						iterator->right = insert(data, iterator);
 						size++;
 						return;
 					}
 				}
-				else if (data < iterator->data) {
-					if (iterator->left) {
+				else if (data < iterator->data)
+				{
+					if (iterator->left) 
+					{
 						iterator = iterator->left;
 						continue;
 					}
-					else {
+					else
+					{
 						iterator->left = insert(data, iterator);
 						size++;
 						return;
 					}
 				}
-				else {
+				else 
 					throw 1;
-				}
 			}
 		}
 	}
 
-	void del(T value) { 
+	void del(T value) 
+	{ 
 		Node<T>* target = find(value);
 		obliterate(target);
 	}
@@ -200,53 +226,61 @@ private:
 	Node<T>* root;
 	int size;
 
-	Node<T>* Max(Node<T>* root) {
-		while (root->right) {
+	Node<T>* Max(Node<T>* root) 
+	{
+		while (root->right) 
 			root = root->right;
-		}
 		return root;
 	}
 
-	void obliterate(Node<T>* target) {
-		if (target->left && target->right) {
+	void obliterate(Node<T>* target) 
+	{
+		if (target->left && target->right) 
+		{
 			Node<T>* localMax = Max(target->left);
 			target->data = localMax->data;
 			obliterate(localMax);
 			return;
 		}
-		else if (target->left) {
-			if (target == target->parent->left) {
+		else if (target->left) 
+		{
+			if (target == target->parent->left) 
+			{
 				target->parent->left = target->left;
 				target->left->parent = target->parent;
 			}
-			else {
+			else 
+			{
 				target->parent->right = target->left;
 				target->left->parent = target->parent;
 			}
 		}
-		else if (target->right) {
-			if (target == target->parent->right) {
+		else if (target->right) 
+		{
+			if (target == target->parent->right) 
+			{
 				target->parent->right = target->right;
 				target->right->parent = target->parent;
 			}
-			else {
+			else 
+			{
 				target->parent->left = target->right;
 				target->right->parent = target->parent;
 			}
 		}
-		else {
-			if (target == target->parent->left) {
+		else 
+		{
+			if (target == target->parent->left) 
 				target->parent->left = nullptr;
-			}
-			else {
+			else 
 				target->parent->right = nullptr;
-			}
 		}
 		delete target;
 		size--;
 	}
 
-	Node<T>* insert(T l_data, Node<T>* parent) {
+	Node<T>* insert(T l_data, Node<T>* parent) 
+	{
 		Node<T>* temp = new Node<T>;
 		temp->data = l_data;
 		temp->left = temp->right = nullptr;
@@ -258,25 +292,29 @@ private:
 int main() {
 	int a;
 	BinaryTree<int> tree;
-	tree.ad(15);
+	tree.ad(9);
 	tree.ad(16);
-	tree.ad(17);
+	tree.ad(200);
 	tree.ad(2);
 	tree.ad(8);
-	tree.ad(1);
+	tree.ad(3);
 	Iterator<int> it = tree.Begin();
 	tree.del(8);
 	cout << "find " << tree.find(2) << endl;
-	while (1) {
-		if (it == tree.End()) {
+	while (1) 
+	{
+		if (it == tree.End()) 
+		{
 			cout << it.GetValue() << "; ";
 			break;
 		}
 		cout << it.GetValue() << "; ";
-		try {
+		try 
+		{
 			it.Next();
 		}
-		catch (int exIndex) {
+		catch (int exIndex) 
+		{
 			Exception ex(exIndex);
 			ex.er();
 		}
