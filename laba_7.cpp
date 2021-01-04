@@ -43,7 +43,6 @@ public:
 
 ostream& operator<< (ostream& out, const fruit& point)
 {
-	// Поскольку operator<< является другом класса Point, то мы имеем прямой доступ к членам Point
 	out << "Fruit(" << point.fruit_name << ", " << point.fruit_price << ")";
 
 	return out;
