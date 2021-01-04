@@ -122,6 +122,8 @@ class Iterator;
 template <class T>
 class BinaryTree;
 
+
+
 template <class T>
 class Node
 {
@@ -744,33 +746,5 @@ void File::WriteBinFormat(const Bible& shoes) {
 	int len = shoes.genre.length();
 	ioFile.write((char*)&len, sizeof(int));
 	ioFile.write(shoes.genre.data(), len);
-	ioFile.close();
-}
-
-void File::Del(std::string name) {
-	int fileSize = CountElementOfBinFile();
-
-	try {
-		ioFile.open(filePath, std::ios::in | std::ios::binary);
-		if (!ioFile.is_open()) {
-			throw 4;
-		}
-	}
-	catch (int index) {
-		Exception ex(index);
-		ex.what();
-		return;
-	}
-
-	Bible temp;
-	for (int i = 0; i < fileSize; i++) {
-		GetElementOfBinFile(temp);
-		if (std::strcmp(temp.genre.data(), name.data()) == 0) {
-			Bible zero(" ", 0, 0, 0, 0);
-			WriteBinFormat(zero);
-			return;
-		}
-	}
-
 	ioFile.close();
 }
