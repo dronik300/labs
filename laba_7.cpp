@@ -5,7 +5,7 @@ using namespace std;
 
 class fruit {
 	friend class manager;
-	friend std::ostream& operator<< (std::ostream& out, const fruit& point);
+	friend ostream& operator<< (ostream& out, const fruit& point);
 	friend bool operator> (fruit& lh, fruit& rh);
 	friend bool operator< (fruit& lh, fruit& rh);
 private:
