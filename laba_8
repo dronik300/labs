@@ -1,1 +1,776 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <io.h>
 
+using namespace std;
+
+class File;
+
+class Bible {
+public:
+	Bible(string gen, int reg_number, int quan,  int read_out_bible, int read_in_bible)
+	{
+		registration_number = reg_number;
+		quantity = quan;
+		genre = gen;
+		in_bible = read_in_bible;
+		out_bible = read_out_bible;
+	}
+	Bible() 
+	{
+		registration_number = 0;
+		quantity = 0;
+		genre = "";
+		in_bible = 0;
+		out_bible = 0;
+	};
+	void PrintInfo() {
+		cout << "Registration number: " << registration_number << endl;
+		cout << "quantity: " << quantity << endl;
+		cout << "genre: " << genre << endl;
+		cout << "in_bible: " << in_bible << endl;
+		cout << "out_bible: " << out_bible << endl;
+	}
+	bool operator <(Bible& other) {
+		if (this->registration_number < other.registration_number) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	bool operator >(Bible& other) {
+		if (this->registration_number > other.registration_number) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	bool operator ==(Bible& other) {
+		if (this->registration_number == other.registration_number) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	bool operator !=(Bible& other) {
+		if (this->registration_number != other.registration_number) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	friend std::ostream& operator<<(std::ostream& out, const Bible& shoes);
+
+private:
+	int registration_number;
+	int quantity;
+	string genre;
+	int in_bible;
+	int out_bible;
+
+	friend File;
+};
+
+class Exception
+{
+private:
+	int error;
+
+public:
+	Exception()
+	{
+		error = 0;
+	}
+	Exception(int error)
+	{
+		this->error = error;
+	}
+	void what()
+	{
+		if (error == 0) {
+			std::cout << "exception!" << std::endl;
+		}
+		if (error == 1)
+		{
+			std::cout << "Cant insert Dublicate!" << std::endl;
+		}
+		if (error == 2)
+		{
+			std::cout << "No such value!" << std::endl;
+		}
+		if (error == 3)
+		{
+			std::cout << "pointer is empty" << std::endl;
+		}
+		if (error == 4)
+		{
+			std::cout << "Can't open such file" << std::endl;
+		}
+	}
+};
+template <class T>
+class Iterator;
+template <class T>
+class BinaryTree;
+
+template <class T>
+class Node
+{
+private:
+	T data;
+	Node* left;
+	Node* right;
+	Node* parent;
+
+	friend Iterator<T>;
+	friend BinaryTree<T>;
+};
+
+template <class T>
+class Iterator
+{
+public:
+	Iterator()
+	{
+		nodePointer = nullptr;
+	}
+	Iterator(Node<T>* nodePointer)
+	{
+		this->nodePointer = nodePointer;
+	}
+	~Iterator()
+	{
+		nodePointer = nullptr;
+	}
+	bool operator== (Iterator other)
+	{
+		if (nodePointer == other.nodePointer)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	bool operator!= (Iterator other)
+	{
+		return !operator==(other);
+	}
+	T GetValue() {
+		if (nodePointer == nullptr)
+		{
+			throw 3;
+		}
+		return nodePointer->data;
+	}
+	void Next() {
+		if (nodePointer->right != nullptr)
+		{
+			nodePointer = nodePointer->right;
+			while (nodePointer->left != nullptr)
+			{
+				nodePointer = nodePointer->left;
+			}
+		}
+		else {
+			if (nodePointer->parent == nullptr)
+			{
+				return;
+			}
+			if (nodePointer->parent->left && nodePointer->parent->left == nodePointer)
+			{
+				nodePointer = nodePointer->parent;
+				return;
+			}
+			if (nodePointer->parent->right && nodePointer->parent->right == nodePointer)
+			{
+				while (nodePointer->data > nodePointer->parent->data)
+				{
+					nodePointer = nodePointer->parent;
+					if (nodePointer->parent == nullptr)
+						throw 3;
+				}
+				nodePointer = nodePointer->parent;
+				return;
+			}
+		}
+	}
+
+private:
+	Node<T>* nodePointer;
+};
+
+template <class T>
+class BinaryTree {
+public:
+	BinaryTree()
+	{
+		root = nullptr;
+		size = 0;
+	}
+
+	Iterator<T> Begin()
+	{
+		Node<T>* temp = root;
+		while (temp->left)
+			temp = temp->left;
+		return temp;
+	}
+
+	Iterator<T> End()
+	{
+		Node<T>* temp = root;
+		while (temp->right)
+			temp = temp->right;
+		return temp;
+	}
+
+	Node<T>* find(T value)
+	{
+		Node<T>* temp = root;
+		while (temp)
+		{
+			if (temp->data > value)
+				temp = root->left;
+			else if (temp->data < value)
+				temp = temp->right;
+			else
+				return temp;
+		}
+		throw 2;
+	}
+
+	void ad(T data)
+	{
+		Node<T>* temp = nullptr;
+		if (!root)
+		{
+			root = insert(data, nullptr);
+			size++;
+		}
+		else {
+			Node<T>* iterator = root;
+			while (iterator)
+			{
+				if (data > iterator->data)
+				{
+					if (iterator->right)
+					{
+						iterator = iterator->right;
+						continue;
+					}
+					else
+					{
+						iterator->right = insert(data, iterator);
+						size++;
+						return;
+					}
+				}
+				else if (data < iterator->data)
+				{
+					if (iterator->left)
+					{
+						iterator = iterator->left;
+						continue;
+					}
+					else
+					{
+						iterator->left = insert(data, iterator);
+						size++;
+						return;
+					}
+				}
+				else
+					throw 1;
+			}
+		}
+	}
+
+	void del(T value)
+	{
+		Node<T>* target = find(value);
+		obliterate(target);
+	}
+
+private:
+	Node<T>* root;
+	int size;
+
+	Node<T>* Max(Node<T>* root)
+	{
+		while (root->right)
+			root = root->right;
+		return root;
+	}
+
+	void obliterate(Node<T>* target)
+	{
+		if (target->left && target->right)
+		{
+			Node<T>* localMax = Max(target->left);
+			target->data = localMax->data;
+			obliterate(localMax);
+			return;
+		}
+		else if (target->left)
+		{
+			if (target == target->parent->left)
+			{
+				target->parent->left = target->left;
+				target->left->parent = target->parent;
+			}
+			else
+			{
+				target->parent->right = target->left;
+				target->left->parent = target->parent;
+			}
+		}
+		else if (target->right)
+		{
+			if (target == target->parent->right)
+			{
+				target->parent->right = target->right;
+				target->right->parent = target->parent;
+			}
+			else
+			{
+				target->parent->left = target->right;
+				target->right->parent = target->parent;
+			}
+		}
+		else
+		{
+			if (target == target->parent->left)
+				target->parent->left = nullptr;
+			else
+				target->parent->right = nullptr;
+		}
+		delete target;
+		size--;
+	}
+
+	Node<T>* insert(T l_data, Node<T>* parent)
+	{
+		Node<T>* temp = new Node<T>;
+		temp->data = l_data;
+		temp->left = temp->right = nullptr;
+		temp->parent = parent;
+		return temp;
+	}
+};
+
+class File {
+public:
+	File(std::string filePath);
+	void SortByNumber();
+	void SortByGenre();
+	void DelByGenre(std::string name);
+	void FindByGenre(std::string name);
+	void ReadBinFormat();
+	void WriteBinFormat(const Bible& shoes);
+	void Del(string name);
+
+private:
+	std::string filePath;
+	std::fstream ioFile;
+	int CountElementOfBinFile();
+	void GetElementOfBinFile(Bible& shoes);
+};
+
+int main() {
+	File file1("file1.txt");
+	File file2("file2.txt");
+	File file3("file3.txt");
+
+	BinaryTree<Bible> tree;
+	tree.ad(Bible("343v", 1, 1, 1, 1));
+	tree.ad(Bible("sdds", 2, 2, 2, 2));
+	tree.ad(Bible("asd", 3, 3, 3, 3));
+	tree.ad(Bible("456", 4, 4, 4, 4));
+	tree.ad(Bible("567", 5, 5, 5, 5));
+
+	Iterator<Bible> it = tree.Begin();
+	while (1) {
+		if (it == tree.End()) {
+			file1.WriteBinFormat(it.GetValue());
+			break;
+		}
+		file1.WriteBinFormat(it.GetValue());
+		it.Next();
+	}
+
+	it = tree.Begin();
+	while (1) {
+		if (it == tree.End()) {
+			file2.WriteBinFormat(it.GetValue());
+			break;
+		}
+		file2.WriteBinFormat(it.GetValue());
+		it.Next();
+	}
+
+	it = tree.Begin();
+	while (1) {
+		if (it == tree.End()) {
+			file3.WriteBinFormat(it.GetValue());
+			break;
+		}
+		file3.WriteBinFormat(it.GetValue());
+		it.Next();
+	}
+
+
+	cout << "file1" << endl;;
+	file1.ReadBinFormat();
+	cout << "file2" << endl;;
+	file2.ReadBinFormat();
+	cout << "file3" << endl;
+	file3.SortByGenre();
+	file3.ReadBinFormat();
+	cout << "Find by genre:" << endl;
+	file3.FindByGenre("456");
+	cout << "Del by genre:" << endl;
+	file2.DelByGenre("asd");
+	file2.ReadBinFormat();
+}
+
+void File::SortByNumber() {
+	int fileSize = CountElementOfBinFile();
+
+	try {
+		ioFile.open(filePath, std::ios::in | std::ios::out | std::ios::binary);
+		if (!ioFile.is_open()) {
+			throw 4;
+		}
+	}
+	catch (int index) {
+		Exception ex(index);
+		ex.what();
+		return;
+	}
+
+	Bible cur, next;
+	int curPos, nextPos;
+	for (int i = 0; i < fileSize; i++) {
+		for (int j = 0; j < fileSize - 1; j++) {
+			curPos = ioFile.tellg();
+			GetElementOfBinFile(cur);
+			cout << "cur" << cur << endl;
+			nextPos = ioFile.tellg();
+			GetElementOfBinFile(next);
+
+			if (cur.registration_number > next.registration_number) {
+				ioFile.seekp(curPos, std::ios::beg);
+
+				ioFile.write((char*)&next.registration_number, sizeof(int));
+				ioFile.write((char*)&next.quantity, sizeof(int));
+				ioFile.write((char*)&next.in_bible, sizeof(double));
+				ioFile.write((char*)&next.out_bible, sizeof(double));
+				int len = next.genre.length();
+				ioFile.write((char*)&len, sizeof(int));
+				ioFile.write(next.genre.data(), len);
+				nextPos = ioFile.tellp();
+
+				ioFile.write((char*)&cur.registration_number, sizeof(int));
+				ioFile.write((char*)&cur.quantity, sizeof(int));
+				ioFile.write((char*)&cur.in_bible, sizeof(double));
+				ioFile.write((char*)&cur.out_bible, sizeof(double));
+				len = cur.genre.length();
+				ioFile.write((char*)&len, sizeof(int));
+				ioFile.write(cur.genre.data(), len);
+			}
+			ioFile.seekg(nextPos, std::ios::beg);
+		}
+		ioFile.seekg(0, std::ios::beg);
+	}
+	ioFile.close();
+}
+
+void File::SortByGenre() {
+	int fileSize = CountElementOfBinFile();
+	try {
+		ioFile.open(filePath, std::ios::in | std::ios::out | std::ios::binary);
+		if (!ioFile.is_open()) {
+			throw 4;
+		}
+	}
+	catch (int index) {
+		Exception ex(index);
+		ex.what();
+		return;
+	}
+	ioFile.is_open();
+
+	Bible cur, next,swap;
+	int curPos, nextPos;
+	for (int i = 0; i < fileSize; i++) {
+		for (int j = 0; j < fileSize - 1; j++) {
+			curPos = ioFile.tellg();
+			GetElementOfBinFile(cur);
+			nextPos = ioFile.tellg();
+			GetElementOfBinFile(next);
+
+
+			if (std::strcmp(next.genre.c_str(), cur.genre.c_str()) < 0) {
+				ioFile.seekp(curPos, std::ios::beg);
+
+				ioFile.write((char*)&next.registration_number, sizeof(int));
+				ioFile.write((char*)&next.quantity, sizeof(int));
+				ioFile.write((char*)&next.in_bible, sizeof(int));
+				ioFile.write((char*)&next.out_bible, sizeof(int));
+				int len = next.genre.length();
+				ioFile.write((char*)&len, sizeof(int));
+				ioFile.write(next.genre.data(), len);
+				nextPos = ioFile.tellp();
+
+				ioFile.write((char*)&cur.registration_number, sizeof(int));
+				ioFile.write((char*)&cur.quantity, sizeof(int));
+				ioFile.write((char*)&cur.in_bible, sizeof(int));
+				ioFile.write((char*)&next.out_bible, sizeof(int));
+				len = cur.genre.length();
+				ioFile.write((char*)&len, sizeof(int));
+				ioFile.write(cur.genre.data(), len);
+			}
+			ioFile.seekg(nextPos, std::ios::beg);
+		}
+		ioFile.seekg(0, std::ios::beg);
+	}
+	ioFile.close();
+}
+
+std::ostream& operator<<(std::ostream& out, const Bible& bible) {
+	out << "Registration number: " << bible.registration_number << endl;
+	out << "quantity: " << bible.quantity << endl;
+	out << "genre: " << bible.genre << endl;
+	out << "in_bible: " << bible.in_bible << endl;
+	out << "out_bible: " << bible.out_bible << endl;
+	return out;
+}
+
+File::File(std::string filePath) {
+	this->filePath = filePath;
+	ioFile.open(filePath, std::ios::out | std::ios::trunc);
+	ioFile.close();
+}
+
+void File::FindByGenre(std::string name) {
+	int fileSize = CountElementOfBinFile();
+
+	try {
+		ioFile.open(filePath, std::ios::in | std::ios::binary);
+		if (!ioFile.is_open()) {
+			throw 4;
+		}
+	}
+	catch (int index) {
+		Exception ex(index);
+		ex.what();
+		return;
+	}
+
+	Bible temp;
+	for (int i = 0; i < fileSize; i++) {
+		GetElementOfBinFile(temp);
+		if (std::strcmp(temp.genre.data(), name.data()) == 0) {
+			std::cout << temp << std::endl;
+			return;
+		}
+	}
+
+	ioFile.close();
+}
+
+void File::DelByGenre(string name) {
+	int fileSize = CountElementOfBinFile();
+
+	try {
+		ioFile.open(filePath, std::ios::in | std::ios::out | std::ios::binary);
+		if (!ioFile.is_open()) {
+			throw 4;
+		}
+	}
+	catch (int index) {
+		Exception ex(index);
+		ex.what();
+		return;
+	}
+
+	Bible cur, next;
+	Bible zero(" ",0,0,0,0);
+	int curPos, nextPos;
+	for (int i = 0; i < fileSize; i++) {
+		curPos = ioFile.tellg();
+		GetElementOfBinFile(cur);
+		if (std::strcmp(cur.genre.data(), name.data()) == 0) {
+			ioFile.seekg(curPos, std::ios::beg);
+			int size = 0;
+			cur = zero;
+			cout << "cur" << endl << cur << endl;
+			for (i; i < fileSize - 1; i++) {
+				curPos = ioFile.tellg();
+				GetElementOfBinFile(cur);
+				nextPos = ioFile.tellg();
+				GetElementOfBinFile(next);
+				size = curPos - nextPos;
+				ioFile.seekp(curPos, std::ios::beg);
+				ioFile.write((char*)&next.registration_number, sizeof(int));
+				ioFile.write((char*)&next.quantity, sizeof(int));
+				ioFile.write((char*)&next.in_bible, sizeof(int));
+				ioFile.write((char*)&next.out_bible, sizeof(int));
+				int len = next.genre.length();
+				ioFile.write((char*)&len, sizeof(int));
+				ioFile.write(next.genre.data(), len);
+				nextPos = ioFile.tellp();
+				ioFile.write((char*)&cur.registration_number, sizeof(int));
+				ioFile.write((char*)&cur.quantity, sizeof(int));
+				ioFile.write((char*)&cur.in_bible, sizeof(int));
+				ioFile.write((char*)&cur.out_bible, sizeof(int));
+				len = cur.genre.length();
+				ioFile.write((char*)&len, sizeof(int));
+				ioFile.write(cur.genre.data(), len);
+				ioFile.seekg(nextPos, std::ios::beg);
+			}
+			ioFile.close();
+			Del(name);
+			return;
+		}
+	}
+
+	ioFile.close();
+}
+
+void File::GetElementOfBinFile(Bible& temp) {
+	int len;
+	ioFile.read((char*)&temp.registration_number, sizeof(int));
+	ioFile.read((char*)&temp.quantity, sizeof(int));
+	ioFile.read((char*)&temp.in_bible, sizeof(int));
+	ioFile.read((char*)&temp.out_bible, sizeof(int));
+	ioFile.read((char*)&len, sizeof(int));
+	char* buf = new char[len + 1];
+	ioFile.read(buf, len);
+	buf[len] = 0;
+	temp.genre = buf;
+	delete[] buf;
+}
+
+int File::CountElementOfBinFile() {
+	int size = 0;
+	try {
+		ioFile.open(filePath, std::ios::in | std::ios::binary);
+		if (!ioFile.is_open()) {
+			throw 4;
+		}
+	}
+	catch (int index) {
+		Exception ex(index);
+		ex.what();
+		return 0;
+	}
+	ioFile.seekg(0, std::ios::end);
+	int fileSize = ioFile.tellg();
+	ioFile.seekg(0, std::ios::beg);
+	while (ioFile.tellg() < fileSize) {
+		Bible temp;
+		int len;
+		ioFile.read((char*)&temp.registration_number, sizeof(int));
+		ioFile.read((char*)&temp.quantity, sizeof(int));
+		ioFile.read((char*)&temp.in_bible, sizeof(int));
+		ioFile.read((char*)&temp.out_bible, sizeof(int));
+		ioFile.read((char*)&len, sizeof(int));
+		char* buf = new char[len + 1];
+		ioFile.read(buf, len);
+		buf[len] = 0;
+		temp.genre = buf;
+		delete[] buf;
+		size++;
+	}
+
+	ioFile.close();
+	return size;
+}
+
+void File::ReadBinFormat() {
+	int fileSize = CountElementOfBinFile();
+
+	try {
+		ioFile.open(filePath, std::ios::in | std::ios::binary);
+		if (!ioFile.is_open()) {
+			throw 4;
+		}
+	}
+	catch (int index) {
+		Exception ex(index);
+		ex.what();
+		return;
+	}
+
+	Bible temp;
+	ioFile.seekg(0, std::ios::end);
+	int size = ioFile.tellg();
+	ioFile.seekg(0, std::ios::beg);
+	while (ioFile.tellg() < size) {
+		GetElementOfBinFile(temp);
+		std::cout << temp << std::endl;
+	}
+	ioFile.close();
+}
+
+void File::WriteBinFormat(const Bible& shoes) {
+	try {
+		ioFile.open(filePath, std::ios::out | std::ios::app | std::ios::binary);
+		if (!ioFile.is_open()) {
+			throw 4;
+		}
+	}
+	catch (int index) {
+		Exception ex(index);
+		ex.what();
+		return;
+	}
+	ioFile.write((char*)&shoes.registration_number, sizeof(int));
+	ioFile.write((char*)&shoes.quantity, sizeof(int));
+	ioFile.write((char*)&shoes.in_bible, sizeof(int));
+	ioFile.write((char*)&shoes.out_bible, sizeof(int));
+	int len = shoes.genre.length();
+	ioFile.write((char*)&len, sizeof(int));
+	ioFile.write(shoes.genre.data(), len);
+	ioFile.close();
+}
+
+void File::Del(std::string name) {
+	int fileSize = CountElementOfBinFile();
+
+	try {
+		ioFile.open(filePath, std::ios::in | std::ios::binary);
+		if (!ioFile.is_open()) {
+			throw 4;
+		}
+	}
+	catch (int index) {
+		Exception ex(index);
+		ex.what();
+		return;
+	}
+
+	Bible temp;
+	for (int i = 0; i < fileSize; i++) {
+		GetElementOfBinFile(temp);
+		if (std::strcmp(temp.genre.data(), name.data()) == 0) {
+			Bible zero(" ", 0, 0, 0, 0);
+			WriteBinFormat(zero);
+			return;
+		}
+	}
+
+	ioFile.close();
+}
