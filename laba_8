@@ -9,7 +9,7 @@ class File;
 
 class Bible {
 public:
-	Bible(string gen, int reg_number, int quan,  int read_out_bible, int read_in_bible)
+	Bible(string gen, int reg_number, int quan, int read_out_bible, int read_in_bible)
 	{
 		registration_number = reg_number;
 		quantity = quan;
@@ -17,7 +17,7 @@ public:
 		in_bible = read_in_bible;
 		out_bible = read_out_bible;
 	}
-	Bible() 
+	Bible()
 	{
 		registration_number = 0;
 		quantity = 0;
@@ -122,8 +122,6 @@ class Iterator;
 template <class T>
 class BinaryTree;
 
-
-
 template <class T>
 class Node
 {
@@ -211,6 +209,7 @@ public:
 private:
 	Node<T>* nodePointer;
 };
+
 
 template <class T>
 class BinaryTree {
@@ -374,13 +373,14 @@ private:
 class File {
 public:
 	File(std::string filePath);
-	void SortByNumber();
-	void SortByGenre();
 	void DelByGenre(std::string name);
 	void FindByGenre(std::string name);
 	void ReadBinFormat();
 	void WriteBinFormat(const Bible& shoes);
 	void Del(string name);
+	void quickSort(int* numbers, int left, int right);
+	void Sortbyquantity();
+	void SortByNumber();
 
 private:
 	std::string filePath;
@@ -391,15 +391,15 @@ private:
 
 int main() {
 	File file1("file1.txt");
-	File file2("file2.txt");
-	File file3("file3.txt");
+	File file2("yeee1.txt");
+	File file3("yeee2.txt");
 
 	BinaryTree<Bible> tree;
-	tree.ad(Bible("343v", 1, 1, 1, 1));
-	tree.ad(Bible("sdds", 2, 2, 2, 2));
+	tree.ad(Bible("343v", 5, 1, 1, 1));
+	tree.ad(Bible("sdds", 4, 2, 2, 2));
 	tree.ad(Bible("asd", 3, 3, 3, 3));
-	tree.ad(Bible("456", 4, 4, 4, 4));
-	tree.ad(Bible("567", 5, 5, 5, 5));
+	tree.ad(Bible("456", 2, 4, 4, 4));
+	tree.ad(Bible("567", 1, 5, 5, 5));
 
 	Iterator<Bible> it = tree.Begin();
 	while (1) {
@@ -430,124 +430,9 @@ int main() {
 		file3.WriteBinFormat(it.GetValue());
 		it.Next();
 	}
-
-
-	cout << "file1" << endl;;
 	file1.ReadBinFormat();
-	cout << "file2" << endl;;
-	file2.ReadBinFormat();
-	cout << "file3" << endl;
-	file3.SortByGenre();
-	file3.ReadBinFormat();
-	cout << "Find by genre:" << endl;
-	file3.FindByGenre("456");
-	cout << "Del by genre:" << endl;
-	file2.DelByGenre("asd");
-	file2.ReadBinFormat();
-}
-
-void File::SortByNumber() {
-	int fileSize = CountElementOfBinFile();
-
-	try {
-		ioFile.open(filePath, std::ios::in | std::ios::out | std::ios::binary);
-		if (!ioFile.is_open()) {
-			throw 4;
-		}
-	}
-	catch (int index) {
-		Exception ex(index);
-		ex.what();
-		return;
-	}
-
-	Bible cur, next;
-	int curPos, nextPos;
-	for (int i = 0; i < fileSize; i++) {
-		for (int j = 0; j < fileSize - 1; j++) {
-			curPos = ioFile.tellg();
-			GetElementOfBinFile(cur);
-			cout << "cur" << cur << endl;
-			nextPos = ioFile.tellg();
-			GetElementOfBinFile(next);
-
-			if (cur.registration_number > next.registration_number) {
-				ioFile.seekp(curPos, std::ios::beg);
-
-				ioFile.write((char*)&next.registration_number, sizeof(int));
-				ioFile.write((char*)&next.quantity, sizeof(int));
-				ioFile.write((char*)&next.in_bible, sizeof(double));
-				ioFile.write((char*)&next.out_bible, sizeof(double));
-				int len = next.genre.length();
-				ioFile.write((char*)&len, sizeof(int));
-				ioFile.write(next.genre.data(), len);
-				nextPos = ioFile.tellp();
-
-				ioFile.write((char*)&cur.registration_number, sizeof(int));
-				ioFile.write((char*)&cur.quantity, sizeof(int));
-				ioFile.write((char*)&cur.in_bible, sizeof(double));
-				ioFile.write((char*)&cur.out_bible, sizeof(double));
-				len = cur.genre.length();
-				ioFile.write((char*)&len, sizeof(int));
-				ioFile.write(cur.genre.data(), len);
-			}
-			ioFile.seekg(nextPos, std::ios::beg);
-		}
-		ioFile.seekg(0, std::ios::beg);
-	}
-	ioFile.close();
-}
-
-void File::SortByGenre() {
-	int fileSize = CountElementOfBinFile();
-	try {
-		ioFile.open(filePath, std::ios::in | std::ios::out | std::ios::binary);
-		if (!ioFile.is_open()) {
-			throw 4;
-		}
-	}
-	catch (int index) {
-		Exception ex(index);
-		ex.what();
-		return;
-	}
-	ioFile.is_open();
-
-	Bible cur, next,swap;
-	int curPos, nextPos;
-	for (int i = 0; i < fileSize; i++) {
-		for (int j = 0; j < fileSize - 1; j++) {
-			curPos = ioFile.tellg();
-			GetElementOfBinFile(cur);
-			nextPos = ioFile.tellg();
-			GetElementOfBinFile(next);
-
-
-			if (std::strcmp(next.genre.c_str(), cur.genre.c_str()) < 0) {
-				ioFile.seekp(curPos, std::ios::beg);
-
-				ioFile.write((char*)&next.registration_number, sizeof(int));
-				ioFile.write((char*)&next.quantity, sizeof(int));
-				ioFile.write((char*)&next.in_bible, sizeof(int));
-				ioFile.write((char*)&next.out_bible, sizeof(int));
-				int len = next.genre.length();
-				ioFile.write((char*)&len, sizeof(int));
-				ioFile.write(next.genre.data(), len);
-				nextPos = ioFile.tellp();
-
-				ioFile.write((char*)&cur.registration_number, sizeof(int));
-				ioFile.write((char*)&cur.quantity, sizeof(int));
-				ioFile.write((char*)&cur.in_bible, sizeof(int));
-				ioFile.write((char*)&next.out_bible, sizeof(int));
-				len = cur.genre.length();
-				ioFile.write((char*)&len, sizeof(int));
-				ioFile.write(cur.genre.data(), len);
-			}
-			ioFile.seekg(nextPos, std::ios::beg);
-		}
-		ioFile.seekg(0, std::ios::beg);
-	}
-	ioFile.close();
+	cout << "----------------------" << endl;
+	file1.Sortbyquantity();
 }
 
 std::ostream& operator<<(std::ostream& out, const Bible& bible) {
@@ -608,7 +493,7 @@ void File::DelByGenre(string name) {
 	}
 
 	Bible cur, next;
-	Bible zero(" ",0,0,0,0);
+	Bible zero(" ", 0, 0, 0, 0);
 	int curPos, nextPos;
 	for (int i = 0; i < fileSize; i++) {
 		curPos = ioFile.tellg();
@@ -696,7 +581,6 @@ int File::CountElementOfBinFile() {
 		delete[] buf;
 		size++;
 	}
-
 	ioFile.close();
 	return size;
 }
@@ -727,7 +611,7 @@ void File::ReadBinFormat() {
 	ioFile.close();
 }
 
-void File::WriteBinFormat(const Bible& shoes) {
+void File::WriteBinFormat(const Bible& bible) {
 	try {
 		ioFile.open(filePath, std::ios::out | std::ios::app | std::ios::binary);
 		if (!ioFile.is_open()) {
@@ -739,12 +623,153 @@ void File::WriteBinFormat(const Bible& shoes) {
 		ex.what();
 		return;
 	}
-	ioFile.write((char*)&shoes.registration_number, sizeof(int));
-	ioFile.write((char*)&shoes.quantity, sizeof(int));
-	ioFile.write((char*)&shoes.in_bible, sizeof(int));
-	ioFile.write((char*)&shoes.out_bible, sizeof(int));
-	int len = shoes.genre.length();
+	ioFile.write((char*)&bible.registration_number, sizeof(int));
+	ioFile.write((char*)&bible.quantity, sizeof(int));
+	ioFile.write((char*)&bible.in_bible, sizeof(int));
+	ioFile.write((char*)&bible.out_bible, sizeof(int));
+	int len = bible.genre.length();
 	ioFile.write((char*)&len, sizeof(int));
-	ioFile.write(shoes.genre.data(), len);
+	ioFile.write(bible.genre.data(), len);
 	ioFile.close();
+}
+
+void File::Del(std::string name) {
+	int fileSize = CountElementOfBinFile();
+
+	try {
+		ioFile.open(filePath, std::ios::in | std::ios::binary);
+		if (!ioFile.is_open()) {
+			throw 4;
+		}
+	}
+	catch (int index) {
+		Exception ex(index);
+		ex.what();
+		return;
+	}
+
+	Bible temp;
+	for (int i = 0; i < fileSize; i++) {
+		GetElementOfBinFile(temp);
+		if (std::strcmp(temp.genre.data(), name.data()) == 0) {
+			Bible zero(" ", 0, 0, 0, 0);
+			WriteBinFormat(zero);
+			return;
+		}
+	}
+
+	ioFile.close();
+}
+
+void File::Sortbyquantity()
+{
+	int size = CountElementOfBinFile();
+	try {
+		ioFile.open(filePath, std::ios::in | std::ios::out | std::ios::binary);
+		if (!ioFile.is_open()) {
+			throw 4;
+		}
+	}
+	catch (int index) {
+		Exception ex(index);
+		ex.what();
+		return;
+	}
+	ioFile.is_open();
+	
+	int* m;
+	m = new int[size];
+	Bible* ms;
+	ms = new Bible[size];
+	for (int i = 0; i < size; i++)
+	{
+		GetElementOfBinFile(ms[i]);
+		m[i] = ms[i].quantity;
+	}
+
+	quickSort(m, 0, size-1);
+	
+	for (int i = 0; i < size; i++)
+		for (int j = 0; j < size; j++)
+		{
+			if (ms[j].quantity == m[i])
+			{
+				cout << ms[j] << endl;
+				WriteBinFormat(ms[j]);
+			}
+		}
+	
+}
+
+void File::SortByNumber()
+{
+	int size = CountElementOfBinFile();
+	try {
+		ioFile.open(filePath, std::ios::in | std::ios::out | std::ios::binary);
+		if (!ioFile.is_open()) {
+			throw 4;
+		}
+	}
+	catch (int index) {
+		Exception ex(index);
+		ex.what();
+		return;
+	}
+	ioFile.is_open();
+
+	int* m;
+	m = new int[size];
+	Bible* ms;
+	ms = new Bible[size];
+	for (int i = 0; i < size; i++)
+	{
+		GetElementOfBinFile(ms[i]);
+		m[i] = ms[i].registration_number;
+	}
+
+	quickSort(m, 0, size - 1);
+
+	for (int i = 0; i < size; i++)
+		for (int j = 0; j < size; j++)
+		{
+			if (ms[j].registration_number == m[i])
+			{
+				cout << ms[j] << endl;
+				WriteBinFormat(ms[j]);
+			}
+		}
+
+}
+
+void File::quickSort(int* numbers, int left, int right) {
+	
+		int pivot;
+		int l_hold = left;
+		int r_hold = right;
+		pivot = numbers[left];
+		while (left < right) 
+		{
+			while ((numbers[right] >= pivot) && (left < right))
+				right--;
+			if (left != right) 
+			{
+				numbers[left] = numbers[right]; 
+				left++; 
+			}
+			while ((numbers[left] <= pivot) && (left < right))
+				left++;
+			if (left != right) 
+			{
+				numbers[right] = numbers[left]; 
+				right--; 
+			}
+		}
+		numbers[left] = pivot;
+		pivot = left;
+		left = l_hold;
+		right = r_hold;
+		if (left < pivot) 
+			quickSort(numbers, left, pivot - 1);
+		if (right > pivot)
+			quickSort(numbers, pivot + 1, right);
 }
