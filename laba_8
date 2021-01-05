@@ -391,8 +391,8 @@ private:
 
 int main() {
 	File file1("file1.txt");
-	File file2("yeee1.txt");
-	File file3("yeee2.txt");
+	File file2("file2.txt");
+	File file3("file3.txt");
 
 	BinaryTree<Bible> tree;
 	tree.ad(Bible("343v", 5, 1, 1, 1));
