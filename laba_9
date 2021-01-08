@@ -6,43 +6,84 @@
 #include <functional>
 #include <set>
 
-namespace cock {
-	class Detail;
+using namespace std;
+
+namespace kekw {
+	class fruit;
 
 	class Algoritms {
 	public:
 		void Algoritm1();
-		int Algoritm2(std::set<Detail>::iterator begin, std::set<Detail>::iterator end, std::function<bool(float)>);
-		void Algoritm3(std::set<Detail>::iterator begin, std::set<Detail>::iterator end, std::set<Detail>& newSet, std::function<bool(float)>);
-		void Print(std::set<Detail>::iterator begin, std::set<Detail>::iterator end);
+		 void Algoritm2(std::set<fruit>::iterator begin, std::set<fruit>::iterator end);
+		 set<fruit>::iterator Algoritm3(std::set<fruit>::iterator begin, std::set<fruit>::iterator end, std::set<fruit>& newSet);
+		 void Print(std::set<fruit>::iterator begin, std::set<fruit>::iterator end);
 	private:
-		bool CheckBrackets(const std::string str);
+		int sum(const std::string str);
+
+		friend fruit;
 	};
 
-	class Detail {
+	class fruit {
+	private:
+		string fruit_name;
+		int fruit_price;
+
 	public:
-		Detail(std::string name, int id, float mass) {
-			this->name = name;
-			this->id = id;
-			this->mass = mass;
-		}
-		friend Algoritms;
+		fruit() : fruit_price(0), fruit_name(" ") {
 
-		friend bool operator <(const cock::Detail& d1, const cock::Detail& d2) {
-			return (d1.id < d2.id);
+		}
+		fruit(string name, int price) {
+			fruit_name = name;
+			fruit_price = price;
+		}
+		~fruit() {
+		}
+	public:
+
+		void price()
+		{
+			cout << fruit_price;
 		}
 
-		friend std::ostream& operator<< (std::ostream& out, const Detail& detail) {
-			out << "Name: " << detail.name << std::endl;
-			out << "ID: " << detail.id << std::endl;
-			out << "Mass: " << detail.mass << std::endl;
+		void name()
+		{
+			cout << fruit_name;
+		}
+
+		string getname()
+		{
+			return  fruit_name;
+		}
+
+		int getprice()
+		{
+			return fruit_price;
+		}
+
+		void setprice()
+		{
+			this->fruit_price = 0;
+		}
+
+
+
+		friend bool operator >(const kekw::fruit& d1, const kekw::fruit& d2) {
+			return (d1.fruit_price > d2.fruit_price);
+		}
+
+		friend bool operator <(const kekw::fruit& d1, const kekw::fruit& d2) {
+			return (d1.fruit_price < d2.fruit_price);
+		}
+
+		friend ostream& operator<< (ostream& out, const fruit& point)
+		{
+			out << "Fruit(" << point.fruit_name << ", " << point.fruit_price << ")";
+
 			return out;
 		}
 
-	private:
-		std::string name;
-		int id;
-		float mass;
+		friend Algoritms;
+
 	};
 
 	class Exception {
@@ -73,80 +114,94 @@ namespace cock {
 	};
 }
 
-bool massCheck(float mass) {
+bool massCheck(int mass) {
 	return (mass < 15);
 }
 
 int main() {
-	cock::Algoritms alg;
-	std::set<cock::Detail> test;
-	std::set<cock::Detail> newTest;
+	kekw::Algoritms alg;
+	set<kekw::fruit> test;
+	set<kekw::fruit> newTest;
 
-	test.insert(cock::Detail("chi", 13, 15.4));
-	test.insert(cock::Detail("mi", 14, 12));
-	test.insert(cock::Detail("ge", 15, 14));
+	test.insert(kekw::fruit("chi", 13));
+	test.insert(kekw::fruit("mi", 14));
+	test.insert(kekw::fruit("ge", 15));
+	
 
-	std::cout << "Algoritm 1\n" << "------------------------------------\n";
+	cout << "Algoritm 1\n" << "------------------------------------\n";
 	alg.Algoritm1();
-	std::cout << std::endl;
+	cout << std::endl;
 
-	std::cout << "Primary set\n" << "------------------------------------\n";
+	cout << "Primary set\n" << "------------------------------------\n";
 	alg.Print(test.begin(), test.end());
 
+	cout << "Algoritm 2\n" << "------------------------------------\n";
+	alg.Algoritm2(test.begin(), test.end());
+	cout << std::endl;
 
-	std::cout << "Algoritm 2\n" << "------------------------------------\n";
-	std::cout << "Quantity of valid values: " << alg.Algoritm2(test.begin(), test.end(), massCheck) << std::endl;
-	std::cout << std::endl;
-
-	std::cout << "Algoritm 3\n" << "------------------------------------\n";
-	alg.Algoritm3(test.begin(), test.end(), newTest, massCheck);
+	cout << "Algoritm 3\n" << "------------------------------------\n";
+	alg.Algoritm3(test.begin(), test.end(), newTest);
 	alg.Print(newTest.begin(), newTest.end());
 
 	return 0;
 }
 
-void cock::Algoritms::Print(std::set<Detail>::iterator begin, std::set<Detail>::iterator end) {
+void kekw::Algoritms::Print(set<fruit>::iterator begin, set<fruit>::iterator end)
+{
 	auto it = begin;
 	while (it != end) {
-		std::cout << *it << std::endl;
+		cout << *it << std::endl;
 		++it;
 	}
 	std::cout << std::endl;
 }
 
-void cock::Algoritms::Algoritm3(std::set<Detail>::iterator begin, std::set<Detail>::iterator end, std::set<Detail>& newSet, std::function<bool(float)> func) {
+set<kekw::fruit>::iterator kekw::Algoritms::Algoritm3(set<fruit>::iterator begin, set<fruit>::iterator end, set<fruit>& newSet) {
 	auto it = begin;
-	while (it != end) {
-		if (func(it->mass)) {
-			newSet.insert(*it);
+	set<kekw::fruit> f;
+	auto it2 = f.begin();
+	string name;
+	int price;
+	while (it != end) 
+	{
+		cout << "Enter name " << endl;
+		cin >> name;
+		cout << "Enter price " << endl;
+		cin >> price;
+		if ((*it).fruit_name != name)
+		{
+			return it;
 		}
+		else if ((*it).fruit_price != price)
+			return it;
 		++it;
 	}
+	return it;
 }
 
-int cock::Algoritms::Algoritm2(std::set<Detail>::iterator begin, std::set<Detail>::iterator end, std::function<bool(float)> func) {
+void kekw::Algoritms::Algoritm2(set<fruit>::iterator begin, set<fruit>::iterator end) {
 	int counter = 0;
 	auto it = begin;
-	while (it != end) {
-		if (func(it->mass)) {
-			++counter;
+	while (it != end) 
+	{
+		if ((*it).fruit_price > 10)
+		{
+			cout << "(*it).fruit_price " << (*it).fruit_price << endl;
+			++it;
 		}
-		++it;
 	}
-
-	return counter;
 }
 
-void cock::Algoritms::Algoritm1() {
-	std::cout << "Checking the correct placement of brackets" << std::endl;
-	std::fstream outFile;
+void kekw::Algoritms::Algoritm1() {
+	cout << "Sum numbers in file: " << endl;
+	fstream outFile;
 	outFile.open("string.txt");
 
 	try {
 		if (!outFile.is_open()) {
 			throw 1;
 		}
-		std::cout << "Data file is opened" << std::endl;
+		cout << "Data file is opened" << endl;
 	}
 	catch (int index) {
 		Exception ex(index);
@@ -154,29 +209,25 @@ void cock::Algoritms::Algoritm1() {
 		return;
 	}
 
-	std::string buffer;
-	std::list<std::string> strList;
+	string buffer;
+	list<string> strList;
 	while (!outFile.eof()) {
-		std::getline(outFile, buffer);
-		if (CheckBrackets(buffer)) {
-			strList.push_back(buffer + " : is right");
-		}
-		else {
-			strList.push_back(buffer + " : is wrong");
-		}
+		getline(outFile, buffer);
 	}
-
-	std::cout << "Algoritm is ended" << std::endl;
+	int suma;
+	suma = sum(buffer);
+	cout << "sum is " << suma << endl;
+	cout << "Algoritm is ended" << std::endl;
 	outFile.close();
-	std::cout << "Data file is closed" << std::endl;
+	cout << "Data file is closed" << std::endl;
 
-	std::ofstream inFile("string2.txt");
+	ofstream inFile("string2.txt");
 
 	try {
 		if (!inFile.is_open()) {
 			throw 1;
 		}
-		std::cout << "Result file is opened" << std::endl << std::endl;
+		cout << "Result file is opened" << endl << endl;
 	}
 	catch (int index) {
 		Exception ex(index);
@@ -184,40 +235,34 @@ void cock::Algoritms::Algoritm1() {
 		return;
 	}
 
-	std::list<std::string>::const_iterator it = strList.begin();
+	list<string>::const_iterator it = strList.begin();
 	while (it != strList.end()) {
 		inFile << *it << "\n";
-		std::cout << *it << std::endl;
+		cout << *it << std::endl;
 		++it;
 	}
-	std::cout << std::endl << "Data was writen" << std::endl;
+	cout << endl << "Data was writen" << endl;
 	inFile.close();
-	std::cout << "Result file is closed" << std::endl;
+	cout << "Result file is closed" << endl;
 }
 
-bool cock::Algoritms::CheckBrackets(const std::string str) {
-	int leftBracketCounter = 0, rightBracketCounter = 0;
-	bool leftFirstFlag = false, rightLastFlag = false, firstFlag = true;
-
-	for (int i = 0; i < str.size(); i++) {
-		if (str[i] == '(') {
-			leftBracketCounter++;
-			if (firstFlag) {
-				leftFirstFlag = true;
-			}
-			rightLastFlag = false;
-			firstFlag = false;
-		}if (str[i] == ')') {
-			rightBracketCounter++;
-			rightLastFlag = true;
-			firstFlag = false;
+int kekw::Algoritms::sum(const string str)
+{
+	int sum, fullsum;
+	sum = 0; fullsum = 0;
+	for (int i = 0; i < str.size(); i++)
+	{
+		if ((int(str[i]) > 48) && (int(str[i])) < 57)
+		{
+			sum = sum * 10 + int(str[i] - 48);
 		}
+		else if (str[i] == ' ' || str[i] == '\n')
+		{
+			fullsum = fullsum + sum;
+			sum = 0;
+		}
+		else sum = 0;
 	}
-
-	if ((leftBracketCounter == 0 && rightBracketCounter == 0) || (leftBracketCounter == rightBracketCounter && leftFirstFlag && rightLastFlag)) {
-		return true;
-	}
-	else {
-		return false;
-	}
-}
+	fullsum = fullsum + sum;
+	return fullsum;
+} // подсчёт числа в строке
